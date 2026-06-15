@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Conociendo el laboratorio</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <main id="app">
+    <section id="startScreen" class="start-screen">
+      <div class="start-card">
+        <p class="eyebrow">Experiencia interactiva</p>
+        <h1>Conociendo el laboratorio</h1>
+        <p>Explora el espacio mediante un recorrido fluido tipo streetwalk.</p>
+
+        <div class="start-buttons">
+          <button id="enterBtn">Entrar al recorrido</button>
+          <button id="soundBtn" class="secondary">Activar sonido</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="tourScreen" class="tour-screen hidden">
+      <img id="frameView" src="" alt="Recorrido virtual" />
+
+      <div class="top-bar">
+        <div>
+          <p id="sceneLabel" class="scene-label">Pasillo principal</p>
+          <h2 id="sceneTitle">Recorrido principal</h2>
+        </div>
+
+        <div class="top-actions">
+          <button id="returnBtn" class="small-btn hidden">Volver al pasillo</button>
+          <button id="homeBtn" class="small-btn">Inicio</button>
+        </div>
+      </div>
+
+      <div id="hotspotLayer" class="hotspot-layer"></div>
+
+      <div class="navigation-controls">
+        <button id="backBtn">← Retroceder</button>
+        <button id="forwardBtn">Avanzar →</button>
+      </div>
+
+      <div class="progress-wrapper">
+        <div id="progressBar" class="progress-bar"></div>
+      </div>
+    </section>
+
+    <section id="modal" class="modal hidden">
+      <div class="modal-content">
+        <button id="closeModalBtn" class="close-btn">Cerrar ✕</button>
+        <h2 id="modalTitle">Video</h2>
+        <video id="modalVideo" controls playsinline></video>
+      </div>
+    </section>
+  </main>
+
+  <script src="data/escenas.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

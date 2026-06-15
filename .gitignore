@@ -1,0 +1,11 @@
+﻿.DS_Store
+Thumbs.db
+.vscode/
+
+# Archivos locales y comprimidos
+.vscode/
+*.zip
+
+# Videos originales pesados
+assets/videos/*.MP4
+assets/videos/*_original.mp4

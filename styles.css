@@ -1,0 +1,400 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: auto;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background: #000;
+  color: white;
+  overflow-x: hidden;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* ========================= */
+/* START SCREEN */
+/* ========================= */
+
+.start-screen {
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(circle at center, rgba(255,255,255,0.08), transparent 60%),
+    #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 200;
+}
+
+.start-card {
+  text-align: center;
+  width: min(900px, 92vw);
+  padding: 40px;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 6px;
+  color: rgba(255,255,255,0.7);
+  margin-bottom: 24px;
+  font-size: 0.9rem;
+}
+
+.start-card h1 {
+  font-size: clamp(4rem, 10vw, 8rem);
+  line-height: 0.95;
+  margin-bottom: 26px;
+  font-weight: 800;
+}
+
+.start-card p {
+  color: rgba(255,255,255,0.78);
+  font-size: 1.15rem;
+  margin-bottom: 40px;
+}
+
+.start-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.start-buttons button {
+  border: none;
+  border-radius: 999px;
+  padding: 18px 32px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: 0.25s ease;
+  font-weight: 600;
+}
+
+.start-buttons button:hover {
+  transform: scale(1.04);
+}
+
+.start-buttons .secondary {
+  background: rgba(255,255,255,0.1);
+  color: white;
+  backdrop-filter: blur(10px);
+}
+
+.start-buttons button:not(.secondary) {
+  background: white;
+  color: black;
+}
+
+/* ========================= */
+/* TOUR SCREEN */
+/* ========================= */
+
+.tour-screen {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: black;
+}
+
+/* ========================= */
+/* FRAME VIEW */
+/* ========================= */
+
+#frameView {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: black;
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+/* ========================= */
+/* TOP BAR */
+/* ========================= */
+
+.top-bar {
+  position: absolute;
+  top: 28px;
+  left: 28px;
+  right: 28px;
+  z-index: 20;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.scene-label {
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.7);
+  margin-bottom: 8px;
+}
+
+.top-bar h2 {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.top-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.small-btn {
+  border: none;
+  border-radius: 999px;
+  padding: 14px 20px;
+  background: rgba(0,0,0,0.55);
+  color: white;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  transition: 0.25s ease;
+  font-size: 0.95rem;
+}
+
+.small-btn:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+/* ========================= */
+/* HOTSPOT */
+/* ========================= */
+
+.hotspot-layer {
+  position: absolute;
+  left: 50%;
+  bottom: 120px;
+  transform: translateX(-50%);
+  z-index: 30;
+  width: min(480px, 92vw);
+}
+
+.hotspot-card {
+  background: rgba(0,0,0,0.68);
+  border: 1px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(16px);
+  border-radius: 28px;
+  padding: 28px;
+  animation: fadeUp 0.35s ease;
+}
+
+.hotspot-card h3 {
+  font-size: 1.5rem;
+  margin-bottom: 12px;
+}
+
+.hotspot-card p {
+  color: rgba(255,255,255,0.8);
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+.hotspot-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.hotspot-actions button {
+  border: none;
+  border-radius: 999px;
+  padding: 14px 22px;
+  cursor: pointer;
+  transition: 0.25s ease;
+  font-weight: 600;
+}
+
+.hotspot-actions button:hover {
+  transform: scale(1.03);
+}
+
+.hotspot-actions button.secondary {
+  background: rgba(255,255,255,0.12);
+  color: white;
+}
+
+.hotspot-actions button:not(.secondary) {
+  background: white;
+  color: black;
+}
+
+/* ========================= */
+/* NAVIGATION */
+/* ========================= */
+
+.navigation-controls {
+  position: absolute;
+  bottom: 32px;
+  left: 28px;
+  z-index: 25;
+
+  display: flex;
+  gap: 12px;
+}
+
+.navigation-controls button {
+  border: none;
+  border-radius: 999px;
+  padding: 15px 20px;
+  background: rgba(0,0,0,0.55);
+  color: white;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  transition: 0.25s ease;
+  font-size: 0.95rem;
+}
+
+.navigation-controls button:hover {
+  background: rgba(255,255,255,0.15);
+}
+
+/* ========================= */
+/* PROGRESS BAR */
+/* ========================= */
+
+.progress-wrapper {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 4px;
+  background: rgba(255,255,255,0.08);
+  z-index: 50;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0%;
+  background: white;
+  transition: width 0.1s linear;
+}
+
+/* ========================= */
+/* MODAL */
+/* ========================= */
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.84);
+  z-index: 100;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 30px;
+}
+
+.modal-content {
+  width: min(1100px, 95vw);
+  background: #060606;
+  border-radius: 30px;
+  padding: 26px;
+  position: relative;
+}
+
+.modal-content h2 {
+  font-size: 2rem;
+  margin-bottom: 18px;
+}
+
+.modal video {
+  width: 100%;
+  border-radius: 22px;
+  background: black;
+}
+
+.close-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+
+  border: none;
+  border-radius: 999px;
+  padding: 12px 18px;
+
+  background: white;
+  color: black;
+
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* ========================= */
+/* ANIMATIONS */
+/* ========================= */
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ========================= */
+/* RESPONSIVE */
+/* ========================= */
+
+@media (max-width: 760px) {
+  .top-bar {
+    left: 14px;
+    right: 14px;
+  }
+
+  .top-actions {
+    max-width: 220px;
+  }
+
+  .small-btn {
+    padding: 9px 12px;
+    font-size: .82rem;
+  }
+
+  .hotspot-layer {
+    bottom: 116px;
+  }
+
+  .hotspot-card {
+    padding: 20px;
+  }
+
+  .hotspot-card h3 {
+    font-size: 1.28rem;
+  }
+
+  .navigation-controls {
+    bottom: 28px;
+    gap: 8px;
+  }
+
+  .navigation-controls button {
+    padding: 11px 13px;
+    font-size: 0.82rem;
+  }
+
+  .start-card h1 {
+    font-size: 4rem;
+  }
+}
