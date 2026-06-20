@@ -24,12 +24,15 @@ const state = {
   loopStarted: false
 };
 
+const imageCache = new Map();
+
 const startScreen = document.getElementById("startScreen");
 const tourScreen = document.getElementById("tourScreen");
 const frameView = document.getElementById("frameView");
 const hotspotLayer = document.getElementById("hotspotLayer");
 const sceneLabel = document.getElementById("sceneLabel");
 const sceneTitle = document.getElementById("sceneTitle");
+const spaceNav = document.getElementById("spaceNav");
 
 const enterBtn = document.getElementById("enterBtn");
 const soundBtn = document.getElementById("soundBtn");
@@ -48,6 +51,29 @@ function getCurrentScene() {
   return window.TOUR_SCENES[state.currentSceneId];
 }
 
+function renderSpaceNavigation() {
+  if (!spaceNav || !window.TOUR_NAV) return;
+
+  spaceNav.innerHTML = "";
+
+  window.TOUR_NAV.forEach(item => {
+    const button = document.createElement("button");
+    button.textContent = item.label;
+    button.className = "space-btn";
+
+    if (item.target === state.currentSceneId) {
+      button.classList.add("active");
+    }
+
+   button.addEventListener("click", () => {
+  state.previousSceneId = state.currentSceneId;
+  state.returnFrame = Math.round(state.currentFrame);
+  loadScene(item.target, item.startFrame || 1);
+});
+    spaceNav.appendChild(button);
+  });
+}
+
 function showTour() {
   startScreen.classList.add("hidden");
   tourScreen.classList.remove("hidden");
@@ -62,6 +88,7 @@ function showTour() {
 
 function loadScene(sceneId, startFrame = 1) {
   const scene = window.TOUR_SCENES[sceneId];
+  if (!scene) return;
 
   state.currentSceneId = sceneId;
   state.currentFrame = startFrame;
@@ -73,6 +100,7 @@ function loadScene(sceneId, startFrame = 1) {
   hotspotLayer.innerHTML = "";
 
   updateReturnButton();
+  renderSpaceNavigation();
   setDocumentHeight();
   setFrame(startFrame);
   syncScrollToFrame(startFrame);
@@ -122,7 +150,7 @@ function updateFrameEngine() {
   const difference = state.targetFrame - state.currentFrame;
 
   if (Math.abs(difference) > 0.1) {
-    state.currentFrame += difference * 0.18;
+    state.currentFrame += difference * 0.10;
   }
 
   const visibleFrame = Math.round(state.currentFrame);
@@ -130,14 +158,18 @@ function updateFrameEngine() {
   setFrame(visibleFrame);
   updateHotspots(visibleFrame);
   updateProgressBar(visibleFrame);
+  preloadFrames(scene, visibleFrame);
 }
 
 function setFrame(frameNumber) {
   const scene = getCurrentScene();
   const safeFrame = clamp(Math.round(frameNumber), 1, scene.frameCount);
   const frameName = `frame_${String(safeFrame).padStart(4, "0")}.jpg`;
+  const src = scene.framePath + frameName;
 
-  frameView.src = scene.framePath + frameName;
+  if (frameView.src.endsWith(src)) return;
+
+  frameView.src = src;
 }
 
 function syncScrollToFrame(frameNumber) {
@@ -165,6 +197,7 @@ function moveFrames(amount) {
   syncScrollToFrame(newFrame);
   updateHotspots(newFrame);
   updateProgressBar(newFrame);
+  preloadFrames(scene, newFrame);
 }
 
 function updateProgressBar(frameNumber) {
@@ -286,6 +319,7 @@ function goHome() {
 
   hotspotLayer.innerHTML = "";
   updateReturnButton();
+  renderSpaceNavigation();
 }
 
 function updateReturnButton() {
@@ -352,10 +386,18 @@ function toggleSound() {
 }
 
 function preloadFrames(scene, startFrame) {
-  for (let i = startFrame; i < Math.min(startFrame + 30, scene.frameCount); i++) {
-    const img = new Image();
+  const start = Math.max(1, startFrame - 40);
+  const end = Math.min(scene.frameCount, startFrame + 90);
+
+  for (let i = start; i <= end; i++) {
     const frameName = `frame_${String(i).padStart(4, "0")}.jpg`;
-    img.src = scene.framePath + frameName;
+    const src = scene.framePath + frameName;
+
+    if (imageCache.has(src)) continue;
+
+    const img = new Image();
+    img.src = src;
+    imageCache.set(src, img);
   }
 }
 

@@ -19,9 +19,7 @@ body {
   display: none !important;
 }
 
-/* ========================= */
 /* START SCREEN */
-/* ========================= */
 
 .start-screen {
   position: fixed;
@@ -94,9 +92,7 @@ body {
   color: black;
 }
 
-/* ========================= */
 /* TOUR SCREEN */
-/* ========================= */
 
 .tour-screen {
   position: fixed;
@@ -104,10 +100,6 @@ body {
   overflow: hidden;
   background: black;
 }
-
-/* ========================= */
-/* FRAME VIEW */
-/* ========================= */
 
 #frameView {
   position: absolute;
@@ -118,11 +110,11 @@ body {
   background: black;
   will-change: transform;
   transform: translateZ(0);
+  backface-visibility: hidden;
+  image-rendering: auto;
 }
 
-/* ========================= */
 /* TOP BAR */
-/* ========================= */
 
 .top-bar {
   position: absolute;
@@ -130,11 +122,14 @@ body {
   left: 28px;
   right: 28px;
   z-index: 20;
-
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   gap: 20px;
+}
+
+.scene-info {
+  min-width: 220px;
 }
 
 .scene-label {
@@ -148,33 +143,64 @@ body {
 .top-bar h2 {
   font-size: 2rem;
   font-weight: 700;
+  text-shadow: 0 3px 18px rgba(0,0,0,0.65);
 }
 
 .top-actions {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: flex-end;
+  max-width: 760px;
+}
+
+/* SPACE NAV BUTTONS */
+
+.space-nav {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.space-btn {
+  border: 1px solid rgba(255,255,255,0.24);
+  border-radius: 999px;
+  padding: 10px 14px;
+  background: rgba(0,0,0,0.52);
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  transition: 0.2s ease;
+  font-size: 0.9rem;
+}
+
+.space-btn:hover,
+.space-btn.active {
+  background: white;
+  color: black;
 }
 
 .small-btn {
   border: none;
   border-radius: 999px;
-  padding: 14px 20px;
+  padding: 10px 16px;
   background: rgba(0,0,0,0.55);
   color: white;
   cursor: pointer;
   backdrop-filter: blur(12px);
   transition: 0.25s ease;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
+  font-weight: 700;
 }
 
 .small-btn:hover {
   background: rgba(255,255,255,0.2);
 }
 
-/* ========================= */
 /* HOTSPOT */
-/* ========================= */
 
 .hotspot-layer {
   position: absolute;
@@ -182,7 +208,7 @@ body {
   bottom: 120px;
   transform: translateX(-50%);
   z-index: 30;
-  width: min(480px, 92vw);
+  width: min(520px, 92vw);
 }
 
 .hotspot-card {
@@ -192,6 +218,7 @@ body {
   border-radius: 28px;
   padding: 28px;
   animation: fadeUp 0.35s ease;
+  box-shadow: 0 22px 70px rgba(0,0,0,0.5);
 }
 
 .hotspot-card h3 {
@@ -234,16 +261,13 @@ body {
   color: black;
 }
 
-/* ========================= */
 /* NAVIGATION */
-/* ========================= */
 
 .navigation-controls {
   position: absolute;
   bottom: 32px;
   left: 28px;
   z-index: 25;
-
   display: flex;
   gap: 12px;
 }
@@ -264,9 +288,7 @@ body {
   background: rgba(255,255,255,0.15);
 }
 
-/* ========================= */
 /* PROGRESS BAR */
-/* ========================= */
 
 .progress-wrapper {
   position: absolute;
@@ -285,20 +307,16 @@ body {
   transition: width 0.1s linear;
 }
 
-/* ========================= */
 /* MODAL */
-/* ========================= */
 
 .modal {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.84);
   z-index: 100;
-
   display: flex;
   justify-content: center;
   align-items: center;
-
   padding: 30px;
 }
 
@@ -325,21 +343,16 @@ body {
   position: absolute;
   top: 20px;
   right: 20px;
-
   border: none;
   border-radius: 999px;
   padding: 12px 18px;
-
   background: white;
   color: black;
-
   cursor: pointer;
   font-weight: 600;
 }
 
-/* ========================= */
 /* ANIMATIONS */
-/* ========================= */
 
 @keyframes fadeUp {
   from {
@@ -353,23 +366,45 @@ body {
   }
 }
 
-/* ========================= */
 /* RESPONSIVE */
-/* ========================= */
 
 @media (max-width: 760px) {
   .top-bar {
+    top: 14px;
     left: 14px;
     right: 14px;
+    gap: 12px;
+  }
+
+  .top-bar h2 {
+    font-size: 1.35rem;
+  }
+
+  .scene-info {
+    min-width: 130px;
+  }
+
+  .scene-label {
+    font-size: 0.68rem;
+    letter-spacing: 2px;
   }
 
   .top-actions {
-    max-width: 220px;
+    max-width: 300px;
+  }
+
+  .space-nav {
+    max-width: 260px;
+  }
+
+  .space-btn {
+    padding: 8px 10px;
+    font-size: 0.78rem;
   }
 
   .small-btn {
-    padding: 9px 12px;
-    font-size: .82rem;
+    padding: 8px 11px;
+    font-size: 0.78rem;
   }
 
   .hotspot-layer {

@@ -35,15 +35,8 @@ window.TOUR_SCENES = {
         title: "Podcast y sonido",
         text: "Puedes entrar al estudio de podcast o continuar el recorrido.",
         actions: [
-          {
-            label: "Entrar al podcast",
-            type: "goto",
-            target: "podcast"
-          },
-          {
-            label: "Seguir",
-            type: "continue"
-          }
+          { label: "Entrar al podcast", type: "goto", target: "podcast" },
+          { label: "Seguir", type: "continue" }
         ]
       },
 
@@ -59,10 +52,7 @@ window.TOUR_SCENES = {
             video: "analisis_entorno_colombiano_web.mp4",
             modalTitle: "Transmedia e IA"
           },
-          {
-            label: "Volver al inicio",
-            type: "home"
-          }
+          { label: "Volver al inicio", type: "home" }
         ]
       }
     ]
@@ -89,10 +79,7 @@ window.TOUR_SCENES = {
             video: "05_espacio_1_video_click_1_web.mp4",
             modalTitle: "Video del salón 1"
           },
-          {
-            label: "Volver al pasillo",
-            type: "return"
-          }
+          { label: "Volver al pasillo", type: "return" }
         ]
       }
     ]
@@ -119,10 +106,7 @@ window.TOUR_SCENES = {
             video: "analisis_entorno_colombiano_web.mp4",
             modalTitle: "Contenido del salón 2"
           },
-          {
-            label: "Volver al pasillo",
-            type: "return"
-          }
+          { label: "Volver al pasillo", type: "return" }
         ]
       }
     ]
@@ -135,9 +119,41 @@ window.TOUR_SCENES = {
     frameCount: 260,
     pixelsPerFrame: 14,
     returnTo: "pasillo",
+    hotspots: []
+  },
+
+  transmedia: {
+    title: "Transmedia e IA",
+    label: "Pantalla verde",
+    framePath: "assets/frames/pasillo/",
+    frameCount: 482,
+    pixelsPerFrame: 12,
+    returnTo: "pasillo",
 
     hotspots: [
-      
+      {
+        start: 410,
+        end: 470,
+        title: "Transmedia e IA",
+        text: "Explora una pieza relacionada con análisis del entorno colombiano.",
+        actions: [
+          {
+            label: "Ver video",
+            type: "modalVideo",
+            video: "analisis_entorno_colombiano_web.mp4",
+            modalTitle: "Transmedia e IA"
+          },
+          { label: "Volver al pasillo", type: "return" }
+        ]
+      }
     ]
   }
 };
+
+window.TOUR_NAV = [
+  { label: "Pasillo", target: "pasillo", startFrame: 1 },
+  { label: "Salón 1", target: "espacio1", startFrame: 1 },
+  { label: "Salón 2", target: "espacio2", startFrame: 1 },
+  { label: "Podcast", target: "podcast", startFrame: 1 },
+  { label: "Transmedia IA", target: "transmedia", startFrame: 410 }
+];
