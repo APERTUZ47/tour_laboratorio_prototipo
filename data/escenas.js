@@ -137,24 +137,7 @@ window.TOUR_SCENES = {
     returnTo: "pasillo",
 
     hotspots: [
-      {
-        start: 230,
-        end: 260,
-        title: "Estación de podcast",
-        text: "Has llegado al espacio de podcast. Puedes reproducir el video o volver al pasillo.",
-        actions: [
-          {
-            label: "Ver podcast",
-            type: "modalVideo",
-            video: "04_podcast_sonido_web.mp4",
-            modalTitle: "Podcast y sonido"
-          },
-          {
-            label: "Volver al pasillo",
-            type: "return"
-          }
-        ]
-      }
+      
     ]
   }
 };
