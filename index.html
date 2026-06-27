@@ -33,7 +33,6 @@
 
         <div class="top-actions">
           <div id="spaceNav" class="space-nav"></div>
-          <button id="returnBtn" class="small-btn hidden">Volver al pasillo</button>
           <button id="homeBtn" class="small-btn">Inicio</button>
         </div>
       </div>
@@ -54,7 +53,19 @@
       <div class="modal-content">
         <button id="closeModalBtn" class="close-btn">Cerrar ✕</button>
         <h2 id="modalTitle">Video</h2>
+
         <video id="modalVideo" controls playsinline></video>
+
+        <div id="videoPlaceholder" class="video-placeholder hidden">
+          <p>Este espacio tendrá un video asociado próximamente.</p>
+          <button id="placeholderQuizBtn">Ir al cuestionario</button>
+        </div>
+
+        <div id="quizBox" class="quiz-box hidden">
+          <h3 id="quizQuestion"></h3>
+          <div id="quizOptions" class="quiz-options"></div>
+          <p id="quizFeedback" class="quiz-feedback"></p>
+        </div>
       </div>
     </section>
   </main>

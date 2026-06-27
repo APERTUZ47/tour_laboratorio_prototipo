@@ -50,9 +50,18 @@ window.TOUR_SCENES = {
             label: "Ver video",
             type: "modalVideo",
             video: "analisis_entorno_colombiano_web.mp4",
-            modalTitle: "Transmedia e IA"
-          },
-          { label: "Volver al inicio", type: "home" }
+            modalTitle: "Transmedia e IA",
+            sound: "transmedia",
+            quiz: {
+              question: "¿Cuál es la función principal del Espacio Transmedia?",
+              options: [
+                "Grabar únicamente podcasts",
+                "Implementar experiencias innovadoras como hologramas",
+                "Almacenar equipos del laboratorio"
+              ],
+              correct: 1
+            }
+          }
         ]
       }
     ]
@@ -70,16 +79,25 @@ window.TOUR_SCENES = {
       {
         start: 130,
         end: 150,
-        title: "Punto interactivo del salón",
-        text: "Has llegado al final del recorrido del salón. Puedes abrir el contenido asociado o volver al pasillo.",
+        title: "Contenido del salón 1",
+        text: "Has llegado al final del recorrido del salón. Puedes abrir el contenido asociado.",
         actions: [
           {
             label: "Ver video del salón 1",
             type: "modalVideo",
             video: "05_espacio_1_video_click_1_web.mp4",
-            modalTitle: "Video del salón 1"
-          },
-          { label: "Volver al pasillo", type: "return" }
+            modalTitle: "Video del salón 1",
+            sound: "salon1",
+            quiz: {
+              question: "¿Para qué tipo de producción está pensado el espacio de podcast?",
+              options: [
+                "Para entrevistas, conversaciones y programas de audio",
+                "Para fabricar piezas metálicas",
+                "Para almacenar archivos administrativos"
+              ],
+              correct: 0
+            }
+          }
         ]
       }
     ]
@@ -97,16 +115,25 @@ window.TOUR_SCENES = {
       {
         start: 215,
         end: 240,
-        title: "Punto interactivo del salón",
-        text: "Has llegado al final del recorrido del salón. Puedes abrir el contenido asociado o volver al pasillo.",
+        title: "Contenido del salón 2",
+        text: "Has llegado al final del recorrido del salón. Puedes abrir el contenido asociado.",
         actions: [
           {
             label: "Ver contenido",
             type: "modalVideo",
             video: "analisis_entorno_colombiano_web.mp4",
-            modalTitle: "Contenido del salón 2"
-          },
-          { label: "Volver al pasillo", type: "return" }
+            modalTitle: "Contenido del salón 2",
+            sound: "salon2",
+            quiz: {
+              question: "¿Qué busca integrar el laboratorio en sus proyectos?",
+              options: [
+                "Solo clases tradicionales",
+                "Audio, video, inteligencia artificial y experiencias transmedia",
+                "Únicamente documentos impresos"
+              ],
+              correct: 1
+            }
+          }
         ]
       }
     ]
@@ -119,7 +146,33 @@ window.TOUR_SCENES = {
     frameCount: 260,
     pixelsPerFrame: 14,
     returnTo: "pasillo",
-    hotspots: []
+
+    hotspots: [
+      {
+        start: 220,
+        end: 260,
+        title: "Espacio Podcast",
+        text: "Este ambiente está diseñado para grabar podcasts, gestionar audio y producir contenido sonoro.",
+        actions: [
+          {
+            label: "Ver video podcast",
+            type: "modalVideo",
+            video: null,
+            modalTitle: "Espacio Podcast",
+            sound: "podcast",
+            quiz: {
+              question: "¿Qué permite hacer el Espacio Podcast?",
+              options: [
+                "Capturar sonido con claridad y gestionar niveles de audio",
+                "Realizar tratamientos térmicos",
+                "Proyectar únicamente hologramas"
+              ],
+              correct: 0
+            }
+          }
+        ]
+      }
+    ]
   },
 
   transmedia: {
@@ -135,15 +188,24 @@ window.TOUR_SCENES = {
         start: 410,
         end: 470,
         title: "Transmedia e IA",
-        text: "Explora una pieza relacionada con análisis del entorno colombiano.",
+        text: "Este espacio integra inteligencia artificial y experiencias transmedia como hologramas.",
         actions: [
           {
             label: "Ver video",
             type: "modalVideo",
             video: "analisis_entorno_colombiano_web.mp4",
-            modalTitle: "Transmedia e IA"
-          },
-          { label: "Volver al pasillo", type: "return" }
+            modalTitle: "Transmedia e IA",
+            sound: "transmedia",
+            quiz: {
+              question: "¿Qué se desarrolla en el Espacio Transmedia?",
+              options: [
+                "Experiencias innovadoras con hologramas",
+                "Procesos médicos",
+                "Grabaciones sin audio"
+              ],
+              correct: 0
+            }
+          }
         ]
       }
     ]

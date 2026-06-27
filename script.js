@@ -4,12 +4,30 @@ const AUDIO_FOLDER = "assets/audio/";
 const ambientAudio = {
   pasillo: new Audio(AUDIO_FOLDER + "vid1_pasillo.wav"),
   espacio1: new Audio(AUDIO_FOLDER + "vid2_salon1.wav"),
-  espacio2: new Audio(AUDIO_FOLDER + "vid3_salon2.wav")
+  espacio2: new Audio(AUDIO_FOLDER + "vid3_salon2.wav"),
+  podcast: new Audio(AUDIO_FOLDER + "vid1_pasillo.wav"),
+  transmedia: new Audio(AUDIO_FOLDER + "vid1_pasillo.wav")
+};
+
+const buttonSounds = {
+  salon1: new Audio(AUDIO_FOLDER + "VIDEO BEEP.wav"),
+  salon2: new Audio(AUDIO_FOLDER + "VIDEO BEEP (2).wav"),
+  podcast: new Audio(AUDIO_FOLDER + "VID 1 BEEPS.wav"),
+  transmedia: new Audio(AUDIO_FOLDER + "VIDEO BEEP.wav")
 };
 
 Object.values(ambientAudio).forEach(audio => {
   audio.loop = true;
-  audio.volume = 0.5;
+  audio.volume = 1;
+  audio.preload = "auto";
+  audio.load();
+});
+
+Object.values(buttonSounds).forEach(audio => {
+  audio.loop = false;
+  audio.volume = 1;
+  audio.preload = "auto";
+  audio.load();
 });
 
 const state = {
@@ -21,7 +39,8 @@ const state = {
   activeHotspotIndex: -1,
   isModalOpen: false,
   soundEnabled: false,
-  loopStarted: false
+  loopStarted: false,
+  activeQuiz: null
 };
 
 const imageCache = new Map();
@@ -37,7 +56,6 @@ const spaceNav = document.getElementById("spaceNav");
 const enterBtn = document.getElementById("enterBtn");
 const soundBtn = document.getElementById("soundBtn");
 const homeBtn = document.getElementById("homeBtn");
-const returnBtn = document.getElementById("returnBtn");
 const backBtn = document.getElementById("backBtn");
 const forwardBtn = document.getElementById("forwardBtn");
 const progressBar = document.getElementById("progressBar");
@@ -47,8 +65,39 @@ const modalVideo = document.getElementById("modalVideo");
 const modalTitle = document.getElementById("modalTitle");
 const closeModalBtn = document.getElementById("closeModalBtn");
 
+const videoPlaceholder = document.getElementById("videoPlaceholder");
+const placeholderQuizBtn = document.getElementById("placeholderQuizBtn");
+const quizBox = document.getElementById("quizBox");
+const quizQuestion = document.getElementById("quizQuestion");
+const quizOptions = document.getElementById("quizOptions");
+const quizFeedback = document.getElementById("quizFeedback");
+
 function getCurrentScene() {
   return window.TOUR_SCENES[state.currentSceneId];
+}
+
+function preloadAllAudio() {
+  Object.values(ambientAudio).forEach(audio => {
+    audio.preload = "auto";
+    audio.load();
+  });
+
+  Object.values(buttonSounds).forEach(audio => {
+    audio.preload = "auto";
+    audio.load();
+  });
+}
+
+function playButtonSound(soundKey) {
+  if (!soundKey) return;
+
+  const sound = buttonSounds[soundKey];
+  if (!sound) return;
+
+  sound.pause();
+  sound.currentTime = 0;
+  sound.volume = 1;
+  sound.play().catch(() => {});
 }
 
 function renderSpaceNavigation() {
@@ -65,11 +114,12 @@ function renderSpaceNavigation() {
       button.classList.add("active");
     }
 
-   button.addEventListener("click", () => {
-  state.previousSceneId = state.currentSceneId;
-  state.returnFrame = Math.round(state.currentFrame);
-  loadScene(item.target, item.startFrame || 1);
-});
+    button.addEventListener("click", () => {
+      state.previousSceneId = state.currentSceneId;
+      state.returnFrame = Math.round(state.currentFrame);
+      loadScene(item.target, item.startFrame || 1);
+    });
+
     spaceNav.appendChild(button);
   });
 }
@@ -78,6 +128,7 @@ function showTour() {
   startScreen.classList.add("hidden");
   tourScreen.classList.remove("hidden");
 
+  preloadAllAudio();
   loadScene("pasillo", 1);
 
   if (!state.loopStarted) {
@@ -99,7 +150,6 @@ function loadScene(sceneId, startFrame = 1) {
   sceneTitle.textContent = scene.title;
   hotspotLayer.innerHTML = "";
 
-  updateReturnButton();
   renderSpaceNavigation();
   setDocumentHeight();
   setFrame(startFrame);
@@ -109,17 +159,27 @@ function loadScene(sceneId, startFrame = 1) {
 }
 
 function updateAmbientSound(sceneId) {
-  Object.values(ambientAudio).forEach(audio => {
-    audio.pause();
-    audio.currentTime = 0;
+  Object.entries(ambientAudio).forEach(([id, audio]) => {
+    if (id !== sceneId) {
+      audio.pause();
+      audio.currentTime = 0;
+    }
   });
 
   const selectedAudio = ambientAudio[sceneId];
 
   if (!selectedAudio) return;
 
+  selectedAudio.loop = true;
+  selectedAudio.volume = 1;
+
   if (state.soundEnabled) {
-    selectedAudio.play().catch(() => {});
+    selectedAudio.currentTime = 0;
+    selectedAudio.play().catch(() => {
+      setTimeout(() => {
+        selectedAudio.play().catch(() => {});
+      }, 150);
+    });
   }
 }
 
@@ -256,6 +316,8 @@ function renderHotspot(hotspot) {
 }
 
 function handleAction(action) {
+  playButtonSound(action.sound);
+
   if (action.type === "goto") {
     state.previousSceneId = state.currentSceneId;
     state.returnFrame = Math.round(state.currentFrame);
@@ -282,7 +344,7 @@ function handleAction(action) {
   }
 
   if (action.type === "modalVideo") {
-    openModal(action.video, action.modalTitle || action.label);
+    openModal(action.video, action.modalTitle || action.label, action.quiz || null);
     return;
   }
 
@@ -318,44 +380,85 @@ function goHome() {
   state.activeHotspotIndex = -1;
 
   hotspotLayer.innerHTML = "";
-  updateReturnButton();
   renderSpaceNavigation();
 }
 
-function updateReturnButton() {
-  if (state.currentSceneId === "pasillo") {
-    returnBtn.classList.add("hidden");
-  } else {
-    returnBtn.classList.remove("hidden");
-  }
-}
-
-function openModal(videoFile, title) {
+function openModal(videoFile, title, quiz = null) {
   state.isModalOpen = true;
+  state.activeQuiz = quiz;
 
   pauseAmbientSound();
+  resetQuiz();
 
   modalTitle.textContent = title;
+  modal.classList.remove("hidden");
+
+  if (!videoFile) {
+    modalVideo.classList.add("hidden");
+    videoPlaceholder.classList.remove("hidden");
+    return;
+  }
+
+  videoPlaceholder.classList.add("hidden");
+  modalVideo.classList.remove("hidden");
+
   modalVideo.src = VIDEO_FOLDER + videoFile;
   modalVideo.muted = !state.soundEnabled;
+  modalVideo.volume = 1;
   modalVideo.load();
-
-  modal.classList.remove("hidden");
   modalVideo.play().catch(() => {});
 }
 
 function closeModal() {
   state.isModalOpen = false;
+  state.activeQuiz = null;
 
   modalVideo.pause();
   modalVideo.removeAttribute("src");
   modalVideo.load();
 
   modal.classList.add("hidden");
+  modalVideo.classList.remove("hidden");
+  videoPlaceholder.classList.add("hidden");
+  resetQuiz();
 
   if (state.soundEnabled && !tourScreen.classList.contains("hidden")) {
     updateAmbientSound(state.currentSceneId);
   }
+}
+
+function showQuiz() {
+  if (!state.activeQuiz) return;
+
+  quizBox.classList.remove("hidden");
+  quizQuestion.textContent = state.activeQuiz.question;
+  quizOptions.innerHTML = "";
+  quizFeedback.textContent = "";
+
+  state.activeQuiz.options.forEach((option, index) => {
+    const button = document.createElement("button");
+    button.textContent = option;
+
+    button.addEventListener("click", () => {
+      if (index === state.activeQuiz.correct) {
+        quizFeedback.textContent = "Correcto.";
+        quizFeedback.className = "quiz-feedback correct";
+      } else {
+        quizFeedback.textContent = "Inténtalo de nuevo.";
+        quizFeedback.className = "quiz-feedback incorrect";
+      }
+    });
+
+    quizOptions.appendChild(button);
+  });
+}
+
+function resetQuiz() {
+  quizBox.classList.add("hidden");
+  quizQuestion.textContent = "";
+  quizOptions.innerHTML = "";
+  quizFeedback.textContent = "";
+  quizFeedback.className = "quiz-feedback";
 }
 
 function pauseAmbientSound() {
@@ -377,12 +480,30 @@ function toggleSound() {
   modalVideo.muted = !state.soundEnabled;
 
   if (state.soundEnabled) {
-    updateAmbientSound(state.currentSceneId);
+    preloadAllAudio();
+
+    const sceneId = state.currentSceneId || "pasillo";
+    const selectedAudio = ambientAudio[sceneId];
+
+    stopAmbientSound();
+
+    if (selectedAudio) {
+      selectedAudio.loop = true;
+      selectedAudio.volume = 1;
+      selectedAudio.currentTime = 0;
+
+      selectedAudio.play().catch(() => {
+        setTimeout(() => {
+          selectedAudio.play().catch(() => {});
+        }, 150);
+      });
+    }
+
+    soundBtn.textContent = "Sonido activado";
   } else {
     stopAmbientSound();
+    soundBtn.textContent = "Activar sonido";
   }
-
-  soundBtn.textContent = state.soundEnabled ? "Sonido activado" : "Activar sonido";
 }
 
 function preloadFrames(scene, startFrame) {
@@ -408,11 +529,12 @@ function clamp(value, min, max) {
 enterBtn.addEventListener("click", showTour);
 soundBtn.addEventListener("click", toggleSound);
 homeBtn.addEventListener("click", goHome);
-returnBtn.addEventListener("click", returnToPreviousScene);
-
 backBtn.addEventListener("click", () => moveFrames(-12));
 forwardBtn.addEventListener("click", () => moveFrames(12));
 closeModalBtn.addEventListener("click", closeModal);
+
+modalVideo.addEventListener("ended", showQuiz);
+placeholderQuizBtn.addEventListener("click", showQuiz);
 
 document.addEventListener("keydown", event => {
   if (event.key === "Escape") {
