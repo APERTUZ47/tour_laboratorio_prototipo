@@ -33,6 +33,7 @@
 
         <div class="top-actions">
           <div id="spaceNav" class="space-nav"></div>
+          <button id="mapBtn" class="small-btn">Mapa</button>
           <button id="homeBtn" class="small-btn">Inicio</button>
         </div>
       </div>
@@ -66,6 +67,29 @@
           <div id="quizOptions" class="quiz-options"></div>
           <p id="quizFeedback" class="quiz-feedback"></p>
         </div>
+      </div>
+    </section>
+
+    <section id="mapModal" class="modal hidden">
+      <div class="modal-content map-content">
+        <button id="closeMapBtn" class="close-btn">Cerrar ✕</button>
+        <h2>Mapa del recorrido</h2>
+
+        <div class="route-map">
+          <button data-map-target="pasillo">Pasillo principal</button>
+          <span></span>
+          <button data-map-target="espacio1">Salón 1</button>
+          <span></span>
+          <button data-map-target="espacio2">Salón 2</button>
+          <span></span>
+          <button data-map-target="podcast">Podcast</button>
+          <span></span>
+          <button data-map-target="transmedia">Transmedia IA</button>
+        </div>
+
+        <p class="map-help">
+          Selecciona cualquier espacio para ir directamente a ese punto del recorrido.
+        </p>
       </div>
     </section>
   </main>

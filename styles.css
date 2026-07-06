@@ -499,3 +499,54 @@ body {
 .quiz-feedback.incorrect {
   color: #ff7b72;
 }
+.map-content {
+  max-width: 980px;
+}
+
+.route-map {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 28px;
+}
+
+.route-map button {
+  border: none;
+  border-radius: 999px;
+  padding: 16px 22px;
+  background: white;
+  color: black;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.route-map button:hover {
+  transform: scale(1.04);
+}
+
+.route-map span {
+  width: 42px;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.35);
+}
+
+.map-help {
+  text-align: center;
+  color: rgba(255,255,255,0.72);
+  margin-top: 24px;
+  line-height: 1.5;
+}
+
+@media (max-width: 760px) {
+  .route-map {
+    flex-direction: column;
+  }
+
+  .route-map span {
+    width: 4px;
+    height: 28px;
+  }
+}

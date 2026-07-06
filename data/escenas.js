@@ -6,6 +6,13 @@ window.TOUR_SCENES = {
     frameCount: 482,
     pixelsPerFrame: 12,
 
+    spatialSound: {
+      key: "person",
+      start: 330,
+      peak: 405,
+      end: 470
+    },
+
     hotspots: [
       {
         start: 145,
@@ -80,7 +87,7 @@ window.TOUR_SCENES = {
         start: 130,
         end: 150,
         title: "Contenido del salón 1",
-        text: "Has llegado al final del recorrido del salón. Puedes abrir el contenido asociado.",
+        text: "Has llegado al final del recorrido del salón. Puedes abrir el contenido asociado o volver al punto donde estabas.",
         actions: [
           {
             label: "Ver video del salón 1",
@@ -97,7 +104,8 @@ window.TOUR_SCENES = {
               ],
               correct: 0
             }
-          }
+          },
+          { label: "Volver al punto del pasillo", type: "return" }
         ]
       }
     ]
@@ -116,7 +124,7 @@ window.TOUR_SCENES = {
         start: 215,
         end: 240,
         title: "Contenido del salón 2",
-        text: "Has llegado al final del recorrido del salón. Puedes abrir el contenido asociado.",
+        text: "Has llegado al final del recorrido del salón. Puedes abrir el contenido asociado o volver al punto donde estabas.",
         actions: [
           {
             label: "Ver contenido",
@@ -133,7 +141,8 @@ window.TOUR_SCENES = {
               ],
               correct: 1
             }
-          }
+          },
+          { label: "Volver al punto del pasillo", type: "return" }
         ]
       }
     ]
@@ -169,7 +178,8 @@ window.TOUR_SCENES = {
               ],
               correct: 0
             }
-          }
+          },
+          { label: "Volver al punto del pasillo", type: "return" }
         ]
       }
     ]
@@ -205,7 +215,8 @@ window.TOUR_SCENES = {
               ],
               correct: 0
             }
-          }
+          },
+          { label: "Volver al punto del pasillo", type: "return" }
         ]
       }
     ]
@@ -213,9 +224,39 @@ window.TOUR_SCENES = {
 };
 
 window.TOUR_NAV = [
-  { label: "Pasillo", target: "pasillo", startFrame: 1 },
-  { label: "Salón 1", target: "espacio1", startFrame: 1 },
-  { label: "Salón 2", target: "espacio2", startFrame: 1 },
-  { label: "Podcast", target: "podcast", startFrame: 1 },
-  { label: "Transmedia IA", target: "transmedia", startFrame: 410 }
+  {
+    id: "pasillo",
+    label: "Pasillo",
+    target: "pasillo",
+    startFrame: 1,
+    activeRange: [1, 120]
+  },
+  {
+    id: "salon1",
+    label: "Salón 1",
+    target: "pasillo",
+    startFrame: 145,
+    activeRange: [145, 190]
+  },
+  {
+    id: "salon2",
+    label: "Salón 2",
+    target: "pasillo",
+    startFrame: 220,
+    activeRange: [220, 265]
+  },
+  {
+    id: "podcast",
+    label: "Podcast",
+    target: "pasillo",
+    startFrame: 390,
+    activeRange: [390, 405]
+  },
+  {
+    id: "transmedia",
+    label: "Transmedia IA",
+    target: "pasillo",
+    startFrame: 410,
+    activeRange: [410, 470]
+  }
 ];

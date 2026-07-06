@@ -16,6 +16,10 @@ const buttonSounds = {
   transmedia: new Audio(AUDIO_FOLDER + "VIDEO BEEP.wav")
 };
 
+const spatialSounds = {
+  person: new Audio(AUDIO_FOLDER + "VID 1 BEEPS.wav")
+};
+
 Object.values(ambientAudio).forEach(audio => {
   audio.loop = true;
   audio.volume = 1;
@@ -26,6 +30,13 @@ Object.values(ambientAudio).forEach(audio => {
 Object.values(buttonSounds).forEach(audio => {
   audio.loop = false;
   audio.volume = 1;
+  audio.preload = "auto";
+  audio.load();
+});
+
+Object.values(spatialSounds).forEach(audio => {
+  audio.loop = true;
+  audio.volume = 0;
   audio.preload = "auto";
   audio.load();
 });
@@ -56,6 +67,7 @@ const spaceNav = document.getElementById("spaceNav");
 const enterBtn = document.getElementById("enterBtn");
 const soundBtn = document.getElementById("soundBtn");
 const homeBtn = document.getElementById("homeBtn");
+const mapBtn = document.getElementById("mapBtn");
 const backBtn = document.getElementById("backBtn");
 const forwardBtn = document.getElementById("forwardBtn");
 const progressBar = document.getElementById("progressBar");
@@ -72,6 +84,9 @@ const quizQuestion = document.getElementById("quizQuestion");
 const quizOptions = document.getElementById("quizOptions");
 const quizFeedback = document.getElementById("quizFeedback");
 
+const mapModal = document.getElementById("mapModal");
+const closeMapBtn = document.getElementById("closeMapBtn");
+
 function getCurrentScene() {
   return window.TOUR_SCENES[state.currentSceneId];
 }
@@ -86,9 +101,15 @@ function preloadAllAudio() {
     audio.preload = "auto";
     audio.load();
   });
+
+  Object.values(spatialSounds).forEach(audio => {
+    audio.preload = "auto";
+    audio.load();
+  });
 }
 
 function playButtonSound(soundKey) {
+  if (!state.soundEnabled) return;
   if (!soundKey) return;
 
   const sound = buttonSounds[soundKey];
@@ -109,10 +130,7 @@ function renderSpaceNavigation() {
     const button = document.createElement("button");
     button.textContent = item.label;
     button.className = "space-btn";
-
-    if (item.target === state.currentSceneId) {
-      button.classList.add("active");
-    }
+    button.dataset.navId = item.id;
 
     button.addEventListener("click", () => {
       state.previousSceneId = state.currentSceneId;
@@ -122,6 +140,35 @@ function renderSpaceNavigation() {
 
     spaceNav.appendChild(button);
   });
+
+  updateActiveSpaceButton();
+}
+
+function updateActiveSpaceButton() {
+  if (!spaceNav || !window.TOUR_NAV) return;
+
+  const frame = Math.round(state.currentFrame);
+
+  document.querySelectorAll(".space-btn").forEach(button => {
+    button.classList.remove("active");
+  });
+
+  const activeItem = window.TOUR_NAV.find(item => {
+    if (item.target !== state.currentSceneId) return false;
+    if (!item.activeRange) return false;
+
+    return frame >= item.activeRange[0] && frame <= item.activeRange[1];
+  });
+
+  if (!activeItem) return;
+
+  const activeButton = document.querySelector(
+    `.space-btn[data-nav-id="${activeItem.id}"]`
+  );
+
+  if (activeButton) {
+    activeButton.classList.add("active");
+  }
 }
 
 function showTour() {
@@ -140,6 +187,8 @@ function showTour() {
 function loadScene(sceneId, startFrame = 1) {
   const scene = window.TOUR_SCENES[sceneId];
   if (!scene) return;
+
+  stopSpatialSound();
 
   state.currentSceneId = sceneId;
   state.currentFrame = startFrame;
@@ -183,6 +232,45 @@ function updateAmbientSound(sceneId) {
   }
 }
 
+function updateSpatialSound(frameNumber) {
+  const scene = getCurrentScene();
+
+  if (!state.soundEnabled || !scene.spatialSound) {
+    stopSpatialSound();
+    return;
+  }
+
+  const config = scene.spatialSound;
+  const sound = spatialSounds[config.key];
+
+  if (!sound) return;
+
+  if (frameNumber < config.start || frameNumber > config.end) {
+    sound.volume = 0;
+    sound.pause();
+    sound.currentTime = 0;
+    return;
+  }
+
+  const distance = Math.abs(frameNumber - config.peak);
+  const maxDistance = Math.max(config.peak - config.start, config.end - config.peak);
+  const proximity = clamp(1 - distance / maxDistance, 0, 1);
+
+  sound.volume = proximity;
+
+  if (sound.paused) {
+    sound.play().catch(() => {});
+  }
+}
+
+function stopSpatialSound() {
+  Object.values(spatialSounds).forEach(audio => {
+    audio.pause();
+    audio.currentTime = 0;
+    audio.volume = 0;
+  });
+}
+
 function setDocumentHeight() {
   const scene = getCurrentScene();
   const totalHeight = scene.frameCount * scene.pixelsPerFrame + window.innerHeight;
@@ -218,7 +306,9 @@ function updateFrameEngine() {
   setFrame(visibleFrame);
   updateHotspots(visibleFrame);
   updateProgressBar(visibleFrame);
-  preloadFrames(scene, visibleFrame);
+updateSpatialSound(visibleFrame);
+updateActiveSpaceButton();
+preloadFrames(scene, visibleFrame);
 }
 
 function setFrame(frameNumber) {
@@ -257,6 +347,7 @@ function moveFrames(amount) {
   syncScrollToFrame(newFrame);
   updateHotspots(newFrame);
   updateProgressBar(newFrame);
+  updateSpatialSound(newFrame);
   preloadFrames(scene, newFrame);
 }
 
@@ -365,6 +456,7 @@ function returnToPreviousScene() {
 function goHome() {
   closeModal();
   stopAmbientSound();
+  stopSpatialSound();
 
   window.scrollTo(0, 0);
   document.body.style.height = "100vh";
@@ -388,6 +480,7 @@ function openModal(videoFile, title, quiz = null) {
   state.activeQuiz = quiz;
 
   pauseAmbientSound();
+  stopSpatialSound();
   resetQuiz();
 
   modalTitle.textContent = title;
@@ -424,6 +517,7 @@ function closeModal() {
 
   if (state.soundEnabled && !tourScreen.classList.contains("hidden")) {
     updateAmbientSound(state.currentSceneId);
+    updateSpatialSound(Math.round(state.currentFrame));
   }
 }
 
@@ -499,9 +593,11 @@ function toggleSound() {
       });
     }
 
+    updateSpatialSound(Math.round(state.currentFrame));
     soundBtn.textContent = "Sonido activado";
   } else {
     stopAmbientSound();
+    stopSpatialSound();
     soundBtn.textContent = "Activar sonido";
   }
 }
@@ -522,6 +618,26 @@ function preloadFrames(scene, startFrame) {
   }
 }
 
+function openMap() {
+  mapModal.classList.remove("hidden");
+}
+
+function closeMap() {
+  mapModal.classList.add("hidden");
+}
+
+function goToMapTarget(target) {
+  const navItem = window.TOUR_NAV.find(item => item.target === target);
+  if (!navItem) return;
+
+  closeMap();
+
+  state.previousSceneId = state.currentSceneId;
+  state.returnFrame = Math.round(state.currentFrame);
+
+  loadScene(navItem.target, navItem.startFrame || 1);
+}
+
 function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max);
 }
@@ -529,6 +645,15 @@ function clamp(value, min, max) {
 enterBtn.addEventListener("click", showTour);
 soundBtn.addEventListener("click", toggleSound);
 homeBtn.addEventListener("click", goHome);
+mapBtn.addEventListener("click", openMap);
+closeMapBtn.addEventListener("click", closeMap);
+
+document.querySelectorAll("[data-map-target]").forEach(button => {
+  button.addEventListener("click", () => {
+    goToMapTarget(button.dataset.mapTarget);
+  });
+});
+
 backBtn.addEventListener("click", () => moveFrames(-12));
 forwardBtn.addEventListener("click", () => moveFrames(12));
 closeModalBtn.addEventListener("click", closeModal);
@@ -538,6 +663,11 @@ placeholderQuizBtn.addEventListener("click", showQuiz);
 
 document.addEventListener("keydown", event => {
   if (event.key === "Escape") {
+    if (!mapModal.classList.contains("hidden")) {
+      closeMap();
+      return;
+    }
+
     if (!modal.classList.contains("hidden")) {
       closeModal();
       return;
